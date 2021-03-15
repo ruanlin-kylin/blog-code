@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  
+    <meta name="description" content="欢迎浏览我的博客，看的喜欢的内容，别忘了去github点个star哦~">
+  
+  <meta name="author" content="ruanlin">
+  <meta name="keywords" content="">
+  
+  <title>旧项目接入qiankun微前端方案实践 - ruanlin</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"ruanlin.github.io","root":"/","version":"1.8.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Ruanlin's blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="旧项目接入qiankun微前端方案实践">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-03-13 11:18" pubdate>
+        2021年3月13日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      813 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      11
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">旧项目接入qiankun微前端方案实践</h1>
+            
+            <div class="markdown-body">
+              <h3 id="1、前言"><a href="#1、前言" class="headerlink" title="1、前言"></a>1、前言</h3><p>这里先放一个官方文档链接：<a target="_blank" rel="noopener" href="https://qiankun.umijs.org/zh/guide/getting-started">qiankun</a><br>基本的操作，包括各种接入调用，基础配置啥的，感兴趣的同学，可以自行点击上面的官网链接查看。<br>这里，我主要阐述一下，把<a href="">二次开发平台</a>作为主应用，如何与业务子应用对接开发。</p>
+<h3 id="2、在主应用中注册微应用"><a href="#2、在主应用中注册微应用" class="headerlink" title="2、在主应用中注册微应用"></a>2、在主应用中注册微应用</h3><p>每增加一个子应用都要配置一个对象</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs awk">registerMicroApps([<br>  &#123;<br>    name: <span class="hljs-string">&#x27;react app&#x27;</span>, <span class="hljs-regexp">//</span> 子应用名称<br>    entry: <span class="hljs-string">&#x27;//localhost:7100&#x27;</span>,  <span class="hljs-regexp">//</span> 子应用访问域名<br>    container: <span class="hljs-string">&#x27;#yourContainer&#x27;</span>, <span class="hljs-regexp">//</span> 子应用放置节点id<br>    activeRule: <span class="hljs-string">&#x27;/yourActiveRule&#x27;</span>, <span class="hljs-regexp">//</span> 路由规则<br>  &#125;<br>]);<br><br></code></pre></td></tr></table></figure>
+
+<p>这里面 container 是给装子应用的容器，一般是 div 给个 ID 就行，具体放在哪个页面，由你自己的业务决定。<br>activeRule 是路由规则，根据路由模式决定，下面会着重讲。</p>
+<h3 id="3、关于-activeRule（路由规则），主应用和子应用分别怎么设置"><a href="#3、关于-activeRule（路由规则），主应用和子应用分别怎么设置" class="headerlink" title="3、关于 activeRule（路由规则），主应用和子应用分别怎么设置"></a>3、关于 activeRule（路由规则），主应用和子应用分别怎么设置</h3><p>由于<a href="">二次开发平台</a>的路由一直以来选用的是 hash 模式，所以目前不管是子应用还是二次开发平台主应用，都只推荐是用 hash 模式，才能更平滑且低成本低的接入 qiankun 微前端方案。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs dts">registerMicroApps([<br>  &#123;<br><span class="hljs-symbol">    name:</span> <span class="hljs-string">&quot;vueApp&quot;</span>,<br><span class="hljs-symbol">    entry:</span> <span class="hljs-string">&quot;//192.168.20.49:8080&quot;</span>,<br><span class="hljs-symbol">    container:</span> <span class="hljs-string">&quot;#appContainer&quot;</span>,<br><span class="hljs-symbol">    activeRule:</span> <span class="hljs-string">&quot;/#/micro/app-vue&quot;</span><br>  &#125;<br>]);<br></code></pre></td></tr></table></figure>
+
+<p>这是我本地的一个 demo 例子，点击菜单打开子应用，那就在本身的路由视图那里加一个 id 为 appContainer 的 div，双方都用 hash 模式，activeRule 要加上’/#/‘，micro 是我单独给子应用加的一个路由目录。</p>
+<h3 id="4、子应用设置"><a href="#4、子应用设置" class="headerlink" title="4、子应用设置"></a>4、子应用设置</h3><p>main.js 参照官网，在顶部加入<code>import &quot;./public-path&quot;;</code>文件内容如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">if</span> (<span class="hljs-built_in">window</span>.__POWERED_BY_QIANKUN__) &#123;<br>  <span class="hljs-comment">// eslint-disable-next-line no-undef</span><br>  __webpack_public_path__ = <span class="hljs-built_in">window</span>.__INJECTED_PUBLIC_PATH_BY_QIANKUN__;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>其次，在 main.js 文件中加入代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">let</span> router = <span class="hljs-literal">null</span>;<br><span class="hljs-keyword">let</span> instance = <span class="hljs-literal">null</span>;<br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span>(<span class="hljs-params">props = &#123;&#125;</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> &#123; container &#125; = props;<br>  router = <span class="hljs-keyword">new</span> VueRouter(&#123;<br>    <span class="hljs-comment">// base: window.__POWERED_BY_QIANKUN__ ? &quot;/app-vue/&quot; : &quot;/&quot;,</span><br>    routes,<br>  &#125;);<br><br>  <span class="hljs-comment">// 判断 qiankun 环境则进行路由拦截，判断跳转路由是否有 /micro 开头前缀，没有则加上</span><br>  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">window</span>.__POWERED_BY_QIANKUN__) &#123;<br>    router.beforeEach(<span class="hljs-function">(<span class="hljs-params">to, <span class="hljs-keyword">from</span>, next</span>) =&gt;</span> &#123;<br>      <span class="hljs-keyword">if</span> (!to.path.includes(<span class="hljs-string">&quot;/micro&quot;</span>)) &#123;<br>        next(&#123;<br>          path: <span class="hljs-string">&quot;/micro/app-vue&quot;</span> + to.path,<br>        &#125;);<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        next();<br>      &#125;<br>    &#125;);<br>  &#125;<br><br>  instance = <span class="hljs-keyword">new</span> Vue(&#123;<br>    router,<br>    store,<br>    render: <span class="hljs-function">(<span class="hljs-params">h</span>) =&gt;</span> h(App),<br>  &#125;).$mount(<br>    container ? container.querySelector(<span class="hljs-string">&quot;#operatMicroApp&quot;</span>) : <span class="hljs-string">&quot;#operatMicroApp&quot;</span><br>  );<br>&#125;<br><span class="hljs-comment">// 独立运行时</span><br><span class="hljs-keyword">if</span> (!<span class="hljs-built_in">window</span>.__POWERED_BY_QIANKUN__) &#123;<br>  render();<br>&#125;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bootstrap</span>(<span class="hljs-params"></span>) </span>&#123;<br>  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;[vue] vue app bootstraped&quot;</span>);<br>&#125;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mount</span>(<span class="hljs-params">props</span>) </span>&#123;<br>  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;[vue] props from main framework&quot;</span>, props);<br>  render(props);<br>&#125;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">unmount</span>(<span class="hljs-params"></span>) </span>&#123;<br>  instance.$destroy();<br>  instance.$el.innerHTML = <span class="hljs-string">&quot;&quot;</span>;<br>  instance = <span class="hljs-literal">null</span>;<br>  router = <span class="hljs-literal">null</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>最后，需要在路由文件中加入跟主应用一样路由匹配规则，上述中规则是<code>activeRule: &quot;/#/micro/app-vue&quot;</code>，所以如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> Home <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../views/Home.vue&quot;</span>;<br><br><span class="hljs-keyword">let</span> prefix = <span class="hljs-string">&quot;&quot;</span>;<br><br><span class="hljs-comment">// 判断是 qiankun 环境则增加路由前缀</span><br><span class="hljs-keyword">if</span> (<span class="hljs-built_in">window</span>.__POWERED_BY_QIANKUN__) &#123;<br>  prefix = <span class="hljs-string">&quot;/micro/app-vue&quot;</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> routes = [<br>  &#123;<br>    path: prefix + <span class="hljs-string">&quot;/&quot;</span>,<br>    name: <span class="hljs-string">&quot;home&quot;</span>,<br>    component: Home,<br>  &#125;,<br>  &#123;<br>    path: prefix + <span class="hljs-string">&quot;/about&quot;</span>,<br>    name: <span class="hljs-string">&quot;about&quot;</span>,<br>    <span class="hljs-comment">// route level code-splitting</span><br>    <span class="hljs-comment">// this generates a separate chunk (about.[hash].js) for this route</span><br>    <span class="hljs-comment">// which is lazy-loaded when the route is visited.</span><br>    component: <span class="hljs-function">() =&gt;</span><br>      <span class="hljs-keyword">import</span>(<span class="hljs-comment">/* webpackChunkName: &quot;about&quot; */</span> <span class="hljs-string">&quot;../views/About.vue&quot;</span>),<br>  &#125;,<br>];<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> routes;<br></code></pre></td></tr></table></figure>
+
+<p>看到这里，你应该明白了，路由规则得保持跟主应用中一致，才能保证命中。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>
