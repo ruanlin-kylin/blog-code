@@ -1,5 +1,6 @@
 ---
 title: 旧项目接入qiankun微前端方案实践——hash模式
+comment: "valine"
 ---
 
 ### 1、前言
@@ -140,3 +141,22 @@ export default routes;
 ```
 
 看到这里，你应该明白了，路由规则得保持跟主应用中一致，才能保证命中。
+
+### 5、子应用还需要配置微应用的打包工具
+
+除了代码中暴露出相应的生命周期钩子之外，为了让主应用能正确识别微应用暴露出来的一些信息，微应用的打包工具需要增加如下配置
+
+#### webpack
+
+```
+
+const packageName = require('./package.json').name;
+
+module.exports = {
+  output: {
+    library: `${packageName}-[name]`,
+    libraryTarget: 'umd',
+    jsonpFunction: `webpackJsonp_${packageName}`,
+  },
+};
+```

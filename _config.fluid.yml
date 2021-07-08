@@ -424,7 +424,7 @@ index:
 
     # 为空则按 hexo config.subtitle 显示
     # If empty, text based on `subtitle` in hexo config
-    text: "城市繁华的背后，掩盖着人们当下普遍的浮躁情绪，远离浮华，倾听自己的内心."
+    text: "城市繁华的背后，掩盖着人们当下普遍的浮躁情绪，远离浮华，倾听自己的内心。所有命运赠送的礼物，早已在暗中标好了价格。"
 
     # 通过 API 接口作为首页副标题的内容，必须返回的是 JSON 格式，如果请求失败则按 text 字段显示，该功能必须先开启 typing 打字机功能
     # Subtitle of the homepage through the API, must be returned a JSON. If the request fails, it will be displayed in `text` value. This feature must first enable the typing animation
@@ -614,11 +614,11 @@ post:
   # 评论插件
   # Comment plugin
   comments:
-    enable: false
+    enable: true
     # 指定的插件，需要同时设置对应插件的必要参数
     # The specified plugin needs to set the necessary parameters at the same time
     # Options: utterances | disqus | gitalk | valine | waline | changyan | livere | remark42 | twikoo
-    type: disqus
+    type: valine
 
 
 #---------------------------
@@ -628,6 +628,7 @@ post:
 # 开启评论需要先设置上方 `post: comments: enable: true`，然后根据 `type` 设置下方对应的评论插件参数
 # Enable comments need to be set `post: comments: enable: true`, then set the corresponding comment plugin parameters below according to `type`
 #---------------------------
+
 
 # Utterances
 # 基于 GitHub Issues
@@ -680,9 +681,10 @@ gitalk:
 # Based on LeanCloud
 # See: https://valine.js.org/configuration.html
 valine:
-  appid:
-  appkey:
-  placeholder: 说点什么
+  enable: true
+  appid:  QVLNq1sKhudikpsBWL4YgIOK-gzGzoHsz
+  appkey: AsR9nsrrupogX9s1i6Ncu1vv
+  placeholder: ヾﾉ≧∀≦)o来啊，快活啊! 
   path: window.location.pathname
   avatar: retro
   meta: ['nick', 'mail', 'link']
@@ -814,8 +816,8 @@ about:
   # More icons can be found from https://hexo.fluid-dev.com/docs/en/icon/  `class` is the css class of the icon. If adding `qrcode`, The icon is no longer a link, but a hovering QR code
   icons:
     - { class: "iconfont icon-github-fill", link: "https://github.com/ruanlin-kylin", tip: "GitHub" }
-    # - { class: "iconfont icon-douban-fill", link: "https://douban.com", tip: "豆瓣" }
-    - { class: "iconfont icon-wechat-fill", qrcode: "/img/favicon.png" }
+    # - { class: "iconfont icon-email-fill", link: "https://douban.com", tip: "豆瓣" }
+    - { class: "iconfont icon-wechat-fill", tip: "ruanlin_kylin" }
 
 
 #---------------------------
